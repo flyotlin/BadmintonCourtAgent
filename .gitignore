@@ -1,0 +1,4 @@
+*/chromedriver
+*.pyc
+*.DS_Store
+*.env
