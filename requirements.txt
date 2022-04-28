@@ -1,0 +1,16 @@
+python-telegram-bot==13.11
+selenium==3.141.0
+certifi
+chardet
+click
+flask
+future
+gunicorn
+idna
+itsdangerous
+jinja2
+markupsafe
+requests
+urllib3
+werkzeug
+setuptools

@@ -1,0 +1,7 @@
+[flake8]
+# E501 length
+# E402 module level import not at top of file
+# W503 Line break before binary operator
+# W503 Line break after binary operator
+# W605 invlid escape \
+ignore = E501, E402, W503, W504, W605
