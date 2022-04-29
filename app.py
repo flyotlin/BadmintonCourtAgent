@@ -5,13 +5,9 @@ import telegram
 from flask import Flask, request
 from telegram.ext import Dispatcher
 
-from src.handler.start import StartHandler
 from src.handler.help import HelpHandler
-from src.handler.check import CheckHandler
-from src.handler.check_now import CheckNowHandler
-from src.handler.apply import ApplyHandler
-from src.handler.toggle import ToggleHandler
-
+from src.handler.token import TokenHandler
+from src.handler.toggle_poll import TogglePollHandler
 
 # Need to set webhook on
 TOKEN = ""
@@ -24,12 +20,9 @@ bot = telegram.Bot(token=TOKEN)
 
 # telegram Bot dispatchers
 dispatcher = Dispatcher(bot, None)
-dispatcher.add_handler(StartHandler)
 dispatcher.add_handler(HelpHandler)
-dispatcher.add_handler(CheckHandler)
-dispatcher.add_handler(CheckNowHandler)
-dispatcher.add_handler(ToggleHandler)
-dispatcher.add_handler(ApplyHandler)
+dispatcher.add_handler(TokenHandler)
+dispatcher.add_handler(TogglePollHandler)
 
 # Enable logging
 logging.basicConfig(
@@ -43,6 +36,11 @@ def hook():
     update = telegram.Update.de_json(request.get_json(force=True), bot)
     dispatcher.process_update(update)
     return 'ok'
+
+
+@app.route('/ping')
+def ping():
+    return ("pong", 200)
 
 
 if __name__ == '__main__':
