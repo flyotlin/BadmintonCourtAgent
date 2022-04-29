@@ -1,67 +1,18 @@
-import logging
-import os
-
 from telegram import Update
 from telegram.ext import CommandHandler, CallbackContext
-from threading import Thread
-
-from src.checker import Checker
-
-
-logger = logging.getLogger('app')
-
-
-class CheckerThread(Thread):
-    def __init__(self, group=None, target=None, name=None, args=(), kwargs={}):
-        Thread.__init__(self, group, target, name, args, kwargs)
-        self._return = None
-
-    def run(self):
-        if self._target is not None:
-            self._return = self._target(*self._args, **self._kwargs)
-
-    def join(self):
-        Thread.join(self)
-        return self._return
-
-
-def subprocess_method_for_check(court_id):
-    checker = Checker()
-    checker.login()
-    checker.check_single(court_id)
-    print(checker.court_info_records)
-    checker.logout()
-    checker.bye()
-    return checker.court_info_records
 
 
 def check_command(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text('小幫手阿椰正在查詢目前尚可預約的場地，請稍候...\n\n若急需得知結果，可以使用指令 /check_now 獲取可預約場地 cache 資料。')
-    logger.info('小幫手阿椰正在查詢目前尚可預約的場地，請稍候...')
-
-    threads = []
-    for i in range(1, 7):
-        threads.append(CheckerThread(target=subprocess_method_for_check, args=(i, )))
-        threads[i - 1].start()
-
-    results = []
-    for i in range(6):
-        res = threads[i].join()
-        for j in res:
-            results.append(j)
-
-    logger.info(results)
-    reply_str = ''
-    for i in results:
-        reply_str += f"第{i['court_id']}場\t{i['date']}\t{i['time']}\n"
-
-    # Cache the result
-    if os.path.isfile('./court-info-cache'):
-        os.remove('./court-info-cache')
-    with open('./court-info-cache', 'w') as f:
-        f.write(reply_str)
-
-    update.message.reply_text(reply_str)
+    """Send a message when the command /check is issued."""
+    update.message.reply_text(
+        '椰～歡迎使用羽球場預約小幫手 - 阿椰！\n\n'
+        '以下為小幫手支援的指令：\n'
+        '/help: 查看可用的阿椰指令\n'
+        '/check: 檢查羽球場現有的空場地\n'
+        '/reserve: 預約某場地\n'
+        '/toggle_check: 每天於固定時間自動檢查且回傳空場地資訊\n'
+        '/toggle_reserve: 每天於固定時間自動預約 (週三/週五 20:00, 21:00 任一場地)\n'
+    )
 
 
 CheckHandler = CommandHandler("check", check_command)
