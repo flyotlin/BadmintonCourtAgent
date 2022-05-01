@@ -1,5 +1,6 @@
 python-telegram-bot==13.11
 selenium==3.141.0
+mechanicalsoup
 certifi
 chardet
 click
