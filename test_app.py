@@ -1,0 +1,41 @@
+import logging
+
+from telegram.ext import Updater
+
+from src.handler.help import HelpHandler
+from src.handler.token import TokenHandler
+from src.handler.check import CheckHandler
+from src.handler.reserve import ReserveHandler
+from src.handler.toggle_poll import TogglePollHandler
+from src.handler.toggle_remind import ToggleRemindHandler
+from src.handler.toggle_reserve import ToggleReserveHandler
+
+
+# Need to set webhook on
+TOKEN = ""
+
+
+# Enable logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+)
+logger = logging.getLogger(__name__)
+
+
+if __name__ == '__main__':
+    updater = Updater(token=TOKEN)
+
+    dispatcher = updater.dispatcher
+
+    # telegram Bot dispatchers
+    dispatcher.add_handler(HelpHandler)
+    dispatcher.add_handler(TokenHandler)
+    dispatcher.add_handler(CheckHandler)
+    dispatcher.add_handler(ReserveHandler)
+    dispatcher.add_handler(TogglePollHandler)
+    dispatcher.add_handler(ToggleRemindHandler)
+    dispatcher.add_handler(ToggleReserveHandler)
+
+    updater.start_polling()
+
+    updater.idle()
