@@ -1,13 +1,26 @@
 # Badminton Court Agent Bot
 
+## How to Deploy?
+You can deploy the Bot on your server using `Ansible`.
+
+By executing the ansible playbook `deploy.yaml`, your server is good to go.
+
+Execute: `$ ansible-playbook deploy.yaml`
+
+> Remenber before executing, fill in `base` and `telegram_bot_token` in `vars` inside `deploy.yaml`.
+
+> Remember to open your port 27017 to allow the Bot to accept request from Internet.
+
 ## Chat-bot Commands
-- `/help`
-- `/token`: 設定 token (php_session, xsrf_token, system_session)
-- `/check`: 檢查羽球場現有的空場地
-- `/reserve`: 預約某場地
-- `/toggle_check: 每天於固定時間自動檢查且回傳空場地資訊
-- `/toggle_reserve: 每天於固定時間自動預約 (週三/週五 20:00, 21:00 任一場地)
-- `/toggle_poll: 每週二 / 四固定於 20:00 開啟投票
+- `/help`: 查看可用的阿椰指令，加上 command (optional) 後有更詳細說明
+- `/token`: 設定 token
+- `/check`: 查詢空場地
+- `/reserve`: 預約場地
+- `/toggle_reserve`: 自動預約場地
+- `/toggle_poll`: 自動開啟投票
+- `/toggle_remind`: 自動傳送預約提醒訊息
+
+更詳細的指令可以查看 `src/handler/help.py`。
 ## Acknowledgement
 Special thanks to @cliffxzx.
 ![](https://avatars.githubusercontent.com/u/44764053?v=4)

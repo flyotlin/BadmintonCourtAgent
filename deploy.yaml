@@ -1,0 +1,38 @@
+---
+- name: Deploy Telegram Bot BadmintonCourtAgent to your Server
+  hosts: localhost
+  vars:
+    base:
+    telegram_bot_token:
+    src_repo: https://github.com/flyotlin/BadmintonCourtAgent.git
+    host_port: 27017
+    container_port: 27017
+  tasks:
+    - name: Create src directory
+      file:
+        path: "{{ base }}"
+        state: directory
+    - name: Clone source code from Github
+      ansible.builtin.git:
+        repo: "{{ src_repo }}"
+        dest: "{{ base }}"
+    - name: Create Telegram Bot Token File
+      copy:
+        dest: "{{ base }}/.telegram-bot-token"
+        content: |
+          [bot]
+          token={{ telegram_bot_token }}
+    - name: Install python docker library
+      pip:
+        name: docker==5.0.3
+    - name: Build the Image
+      docker_image:
+        name: badminton_court_agent
+        source: build
+        build:
+          path: .
+    - name: Run BadmintonCourtAgent Bot in a Container
+      docker_container:
+        name: badminton_court_agent_bot
+        image: badminton_court_agent
+        published_ports: "{{ host_port }}:{{ container_port }}"
