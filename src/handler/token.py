@@ -2,6 +2,7 @@ from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import CommandHandler, CallbackContext, ConversationHandler, MessageHandler, Filters
 
 PHP, XSRF, SYS_SESSION = range(3)
+TOKEN_FILE = '.token'
 
 
 def token_command(update: Update, context: CallbackContext) -> int:
@@ -30,7 +31,7 @@ def xsrf(update: Update, context: CallbackContext) -> int:
 def sys_session(update: Update, context: CallbackContext) -> int:
     context.user_data['system_session'] = update.message.text
 
-    with open('token', 'w', encoding='utf-8') as f:
+    with open(TOKEN_FILE, 'w', encoding='utf-8') as f:
         f.write(context.user_data['php_session'])
         f.write('\n')
         f.write(context.user_data['xsrf_token'])
