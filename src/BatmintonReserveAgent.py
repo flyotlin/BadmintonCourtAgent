@@ -41,11 +41,21 @@ class BatmintonReserveAgent():
         return json.loads(courts_json[0])
 
     def _set_current_court(self, court: Court) -> None:
+        """前往羽球館的某一個場地，目的是在 session 中設定場地資訊
+
+        Args:
+            court (Court): _description_
+        """
         SET_CURRENT_COURT_URL = 'https://17fit.com/service-flow-dt'
 
         self.browser.post(SET_CURRENT_COURT_URL, court)
 
     def _get_provider_datetimes(self) -> List[Datetime]:
+        """取得該場地目前所有日期
+
+        Returns:
+            List[Datetime]: _description_
+        """
         GET_PROVIDER_DATETIME_URL = 'https://17fit.com/getServiceProviderDateTimeApi'
 
         datetimes_json = self.browser.post(GET_PROVIDER_DATETIME_URL).json()
@@ -97,6 +107,16 @@ class BatmintonReserveAgent():
         return result
 
     def go(self, court_and_datetime: CourtAndDatetime) -> None:
+        """預約 courts, time 的場地
+
+        Args:
+            time (str): "2022-04-29 18:00:00" 要預約的時間
+            courts (Tuple[COURTS]): 哪些場地 (參考 COURTS)
+            maximun_at_the_same_time (int): 同時預約的最多場地
+
+        Returns:
+            _type_: _description_
+        """
         self._set_current_court(court_and_datetime['court'])
         self._set_current_datetime(court_and_datetime['datetime']['datetime'])
         self._reserve()
