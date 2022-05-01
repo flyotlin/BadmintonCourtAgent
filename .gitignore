@@ -3,3 +3,5 @@
 *.DS_Store
 *.env
 .token
+.telegram-bot-token
+src/legacy
