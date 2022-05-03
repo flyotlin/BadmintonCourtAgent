@@ -5,7 +5,14 @@ from typing import Tuple
 from telegram import Update
 from telegram.ext import CommandHandler, CallbackContext, Job
 
-from src.handler.util import agent_argument_error, agent_command_error, agent_success
+from src.util import (
+    agent_argument_error,
+    agent_command_error,
+    agent_success,
+    store_job_to_file,
+    remove_job_from_file
+)
+from src.callbacks import poll_callback
 
 
 COMMAND = 'toggle_poll'
@@ -23,20 +30,6 @@ def toggle_poll_command(update: Update, context: CallbackContext) -> None:
     else:
         create_poll(update, context)
         return
-
-
-def poll_callback(context: CallbackContext):
-    question = "椰～明天打球嗎？"
-    choices = ["打求", "不打求"]
-    job = context.job
-
-    context.bot.send_poll(
-        job.context,
-        question,
-        choices,
-        is_anonymous=False,
-        allows_multiple_answers=True,
-    )
 
 
 def create_poll(update: Update, context: CallbackContext):
@@ -64,6 +57,14 @@ def create_poll(update: Update, context: CallbackContext):
     _hour = int(_hour)
     _minute = int(_minute)
 
+    store_job_to_file({
+        'name': REMIND_JOB_NAME,
+        'hour': _hour - 8,
+        'minute': _minute,
+        'days': list(_days),
+        'context': update.message.chat_id,
+        'callback': 'poll_callback'
+    })
     context.job_queue.run_daily(
         callback=poll_callback,
         time=time(hour=_hour - 8, minute=_minute),
@@ -80,6 +81,7 @@ def delete_poll(update: Update, context: CallbackContext) -> None:
         agent_argument_error(update, COMMAND)
         return
 
+    remove_job_from_file(REMIND_JOB_NAME)
     jobs: Tuple[Job] = context.job_queue.get_jobs_by_name(REMIND_JOB_NAME)
     for j in jobs:
         j.job.remove()

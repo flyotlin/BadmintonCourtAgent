@@ -5,7 +5,7 @@ import traceback
 from telegram import Update
 from telegram.ext import CommandHandler, CallbackContext
 
-from src.handler.util import agent_argument_error, agent_internal_error
+from src.util import agent_argument_error, agent_internal_error
 from src.BatmintonReserveAgent import BatmintonReserveAgent
 
 

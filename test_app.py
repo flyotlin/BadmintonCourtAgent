@@ -9,6 +9,7 @@ from src.handler.reserve import ReserveHandler
 from src.handler.toggle_poll import TogglePollHandler
 from src.handler.toggle_remind import ToggleRemindHandler
 from src.handler.toggle_reserve import ToggleReserveHandler
+from src.util import load_jobs_from_file
 
 
 # Need to set webhook on
@@ -24,6 +25,7 @@ logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
     updater = Updater(token=TOKEN)
+    load_jobs_from_file(updater.job_queue)
 
     dispatcher = updater.dispatcher
 

@@ -5,7 +5,14 @@ from typing import Tuple
 from telegram import Update
 from telegram.ext import CommandHandler, CallbackContext, Job
 
-from src.handler.util import agent_argument_error, agent_command_error, agent_success
+from src.util import (
+    agent_argument_error,
+    agent_command_error,
+    agent_success,
+    store_job_to_file,
+    remove_job_from_file
+)
+from src.callbacks import remind_callback
 
 
 COMMAND = 'toggle_remind'
@@ -23,11 +30,6 @@ def toggle_remind_command(update: Update, context: CallbackContext) -> None:
     else:
         create_remind(update, context)
         return
-
-
-def remind_callback(context: CallbackContext):
-    job = context.job
-    context.bot.send_message(chat_id=job.context, text='記得預約羽球場喔～')
 
 
 def create_remind(update: Update, context: CallbackContext):
@@ -54,6 +56,14 @@ def create_remind(update: Update, context: CallbackContext):
     _hour = int(_hour)
     _minute = int(_minute)
 
+    store_job_to_file({
+        'name': REMIND_JOB_NAME,
+        'hour': _hour - 8,
+        'minute': _minute,
+        'days': [_day],
+        'context': update.message.chat_id,
+        'callback': 'remind_callback'
+    })
     context.job_queue.run_daily(
         callback=remind_callback,
         time=time(hour=_hour - 8, minute=_minute),
@@ -70,6 +80,7 @@ def delete_remind(update: Update, context: CallbackContext) -> None:
         agent_argument_error(update, COMMAND)
         return
 
+    remove_job_from_file(REMIND_JOB_NAME)
     jobs: Tuple[Job] = context.job_queue.get_jobs_by_name(REMIND_JOB_NAME)
     for j in jobs:
         j.job.remove()

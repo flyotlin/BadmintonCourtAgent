@@ -5,7 +5,7 @@ import traceback
 from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import CommandHandler, CallbackContext, ConversationHandler, MessageHandler, Filters
 
-from src.handler.util import agent_internal_error, agent_success
+from src.util import agent_internal_error, agent_success
 from src.BatmintonReserveAgent import BatmintonReserveAgent
 
 
