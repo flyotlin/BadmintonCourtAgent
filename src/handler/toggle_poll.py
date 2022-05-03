@@ -54,12 +54,12 @@ def create_poll(update: Update, context: CallbackContext):
     else:
         _hour, _minute = DEFAULT_JOB_CONF[1].split(':')
         _days = DEFAULT_JOB_CONF[0]
-    _hour = int(_hour)
+    _hour = ((int(_hour) + 24) - 8) % 24
     _minute = int(_minute)
 
     store_job_to_file({
         'name': REMIND_JOB_NAME,
-        'hour': _hour - 8,
+        'hour': _hour,
         'minute': _minute,
         'days': list(_days),
         'context': update.message.chat_id,
@@ -67,7 +67,7 @@ def create_poll(update: Update, context: CallbackContext):
     })
     context.job_queue.run_daily(
         callback=poll_callback,
-        time=time(hour=_hour - 8, minute=_minute),
+        time=time(hour=_hour, minute=_minute),
         days=_days,
         name=REMIND_JOB_NAME,
         context=update.message.chat_id

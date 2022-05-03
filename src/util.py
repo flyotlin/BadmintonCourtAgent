@@ -81,3 +81,5 @@ def load_jobs_from_file(job_queue: JobQueue, job_file: str = JOB_QUEUE_FILE) -> 
                 name=line['name'],
                 context=line['context']
             )
+
+    os.remove(job_file)

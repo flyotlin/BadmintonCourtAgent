@@ -39,9 +39,10 @@ def create_reserve(update: Update, context: CallbackContext):
             agent_command_error(update, '不能重複設定椰')
             return
 
+        _hour = ((int(i) + 24) - 8) % 24
         store_job_to_file({
             'name': job_name,
-            'hour': int(i) - 8,
+            'hour': _hour,
             'minute': 0,
             'days': [x for x in range(0, 7)],
             'context': update.message.chat_id,
@@ -49,7 +50,7 @@ def create_reserve(update: Update, context: CallbackContext):
         })
         context.job_queue.run_daily(
             callback=reserve_callback,
-            time=time(hour=int(i) - 8, minute=0),
+            time=time(hour=_hour, minute=0),
             name=job_name,
             context=update.message.chat_id
         )
