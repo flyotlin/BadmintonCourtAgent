@@ -1,10 +1,10 @@
 import configparser
 import logging
 import os
-import telegram
 
 from flask import Flask, request
-from telegram.ext import Dispatcher
+from telegram import Bot, Update
+from telegram.ext import Dispatcher, Updater
 
 from src.handler.help import HelpHandler
 from src.handler.token import TokenHandler
@@ -13,6 +13,7 @@ from src.handler.reserve import ReserveHandler
 from src.handler.toggle_poll import TogglePollHandler
 from src.handler.toggle_remind import ToggleRemindHandler
 from src.handler.toggle_reserve import ToggleReserveHandler
+from src.util import load_jobs_from_file
 
 # Need to set webhook on
 config = configparser.ConfigParser()
@@ -23,7 +24,11 @@ TELEGRAM_BOT_TOKEN = config['bot'].get('token')
 app = Flask(__name__)
 
 # telegram Bot
-bot = telegram.Bot(token=TELEGRAM_BOT_TOKEN)
+bot = Bot(token=TELEGRAM_BOT_TOKEN)
+
+# Updater and Load job queues
+updater = Updater(token=TELEGRAM_BOT_TOKEN)
+load_jobs_from_file(updater.job_queue)
 
 # telegram Bot dispatchers
 dispatcher = Dispatcher(bot, None)
@@ -44,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 @app.route('/webhook', methods=['POST'])
 def hook():
-    update = telegram.Update.de_json(request.get_json(force=True), bot)
+    update = Update.de_json(request.get_json(force=True), bot)
     dispatcher.process_update(update)
     return 'ok'
 
