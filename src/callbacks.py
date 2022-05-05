@@ -3,7 +3,7 @@ import traceback
 from datetime import datetime, timedelta
 from telegram.ext import CallbackContext
 
-from src.BatmintonReserveAgent import BatmintonReserveAgent
+from agent import BadmintonReserveAgent
 
 
 TOKEN_FILE = '.token'
@@ -44,7 +44,7 @@ def reserve_callback(context: CallbackContext):
 
     # Reserve with `Token` and `Arguments`
     try:
-        agent = BatmintonReserveAgent(_token)
+        agent = BadmintonReserveAgent(_token)
 
         court_and_datetimes = []
         for reserve_time in _reserve_times:

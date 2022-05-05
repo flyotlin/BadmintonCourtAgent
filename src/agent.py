@@ -6,7 +6,7 @@ import requests
 from typing import Literal, TypedDict, List, Tuple
 
 
-class BatmintonReserveAgent():
+class BadmintonReserveAgent():
     BaseCookie = TypedDict('Cookie', {'PHPSESSID': str, 'XSRF-TOKEN': str, '17fit_system_session': str})
     Court = TypedDict('Court', {'member_id': int, 'member_name': str, 'role_relationships_id': int, 'level_price': int})
     Datetime = TypedDict('Datetime', {'available_role_relationship_ids': List[int], 'date': str, 'datetime': str, 'time': str})

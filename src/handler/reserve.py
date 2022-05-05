@@ -6,7 +6,7 @@ from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import CommandHandler, CallbackContext, ConversationHandler, MessageHandler, Filters
 
 from src.util import agent_internal_error, agent_success
-from src.BatmintonReserveAgent import BatmintonReserveAgent
+from agent import BadmintonReserveAgent
 
 
 STAGE_COURT, STAGE_DATE, STAGE_TIME = range(3)
@@ -67,7 +67,7 @@ def reserve_time(update: Update, context: CallbackContext) -> int:
 
     # Reserve with `Token` and `Arguments`
     try:
-        agent = BatmintonReserveAgent(_token)
+        agent = BadmintonReserveAgent(_token)
 
         court_and_datetimes = []
         for reserve_time in _reserve_times:

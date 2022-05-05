@@ -6,7 +6,7 @@ from telegram import Update
 from telegram.ext import CommandHandler, CallbackContext
 
 from src.util import agent_argument_error, agent_internal_error
-from src.BatmintonReserveAgent import BatmintonReserveAgent
+from agent import BadmintonReserveAgent
 
 
 COMMAND = 'check'
@@ -56,7 +56,7 @@ def check_command(update: Update, context: CallbackContext) -> None:
 
     # Check
     try:
-        agent = BatmintonReserveAgent(_token)
+        agent = BadmintonReserveAgent(_token)
         court_and_datetimes = []
         court_and_datetimes += agent.check(time=_reserved_times, courts=('近講臺左', '近講臺右'))
 
