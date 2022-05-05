@@ -36,7 +36,6 @@ def check_command(update: Update, context: CallbackContext) -> None:
         _court = tuple(map(int, _court.split(',')))
 
     _court = tuple(map(lambda x: COURTS[x - 1], _court))
-    _reserved_times = [f'2022-{_date} {x:02}:00:00' for x in range(6, 22)]
 
     # Token
     if not os.path.isfile(TOKEN_FILE):
@@ -57,10 +56,12 @@ def check_command(update: Update, context: CallbackContext) -> None:
     # Check
     try:
         agent = BadmintonReserveAgent(_token)
-        court_and_datetimes = []
-        court_and_datetimes += agent.check(time=_reserved_times, courts=('近講臺左', '近講臺右'))
+        check_results = agent.check(date=_date, courts=_court)
 
-        update.message.reply_text(f'{court_and_datetimes}')
+        reply_str = ''
+        for i in check_results:
+            reply_str += f"第 {i['court_idx']} 場: {i['date']} {i['time']}"
+        update.message.reply_text(reply_str)
     except Exception:
         traceback.print_exc()
         agent_internal_error(update, "內部發生一些錯誤椰～")
