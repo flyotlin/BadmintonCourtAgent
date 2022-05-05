@@ -62,22 +62,14 @@ def reserve_time(update: Update, context: CallbackContext) -> int:
 
     # Reserve arguments
     _court = tuple(COURTS[int(context.user_data['reserve_info']['court']) - 1])
-    _time = f"{datetime.now().year}-{context.user_data['reserve_info']['date']} {context.user_data['reserve_info']['time']}:00"
-    _reserve_times = [_time]
+    _date = context.user_data['reserve_info']['date']
+    _time = context.user_data['reserve_info']['time']
 
     # Reserve with `Token` and `Arguments`
     try:
         agent = BadmintonReserveAgent(_token)
-
-        court_and_datetimes = []
-        for reserve_time in _reserve_times:
-            court_and_datetimes += agent.check(time=reserve_time, courts=_court)
-
-        for court_and_datetime in court_and_datetimes:
-            agent.go(court_and_datetime)
-
-            # TODO: send success preserve message to telegram (by Cliff)
-            agent_success(update, 'reserve court {} at {} success!'.format(court_and_datetime['court']['member_name'], court_and_datetime['datetime']['datetime']))
+        if agent.go(court=_court, date=_date, time=_time):
+            agent_success(update, f'椰～成功預約第 {_court} 場 @ {_date} {_time}！')
         else:
             agent_internal_error(update, '您指定的場地已經被預約了椰')
     except Exception:
