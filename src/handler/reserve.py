@@ -6,7 +6,7 @@ from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import CommandHandler, CallbackContext, ConversationHandler, MessageHandler, Filters
 
 from src.util import agent_internal_error, agent_success
-from agent import BadmintonReserveAgent
+from src.agent import BadmintonReserveAgent
 
 
 STAGE_COURT, STAGE_DATE, STAGE_TIME = range(3)
@@ -61,7 +61,7 @@ def reserve_time(update: Update, context: CallbackContext) -> int:
         _token['17fit_system_session'] = lines[2]
 
     # Reserve arguments
-    _court = tuple(COURTS[int(context.user_data['reserve_info']['court']) - 1])
+    _court = int(context.user_data['reserve_info']['court'])
     _date = context.user_data['reserve_info']['date']
     _time = context.user_data['reserve_info']['time']
 

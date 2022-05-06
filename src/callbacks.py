@@ -3,7 +3,7 @@ import traceback
 from datetime import datetime, timedelta
 from telegram.ext import CallbackContext
 
-from agent import BadmintonReserveAgent
+from src.agent import BadmintonReserveAgent
 
 
 TOKEN_FILE = '.token'
