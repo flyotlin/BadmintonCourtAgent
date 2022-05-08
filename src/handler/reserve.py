@@ -1,4 +1,3 @@
-from datetime import datetime
 import os
 import traceback
 
@@ -6,7 +5,7 @@ from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import CommandHandler, CallbackContext, ConversationHandler, MessageHandler, Filters
 
 from src.util import agent_internal_error, agent_success
-from agent import BadmintonReserveAgent
+from src.agent import BadmintonReserveAgent
 
 
 STAGE_COURT, STAGE_DATE, STAGE_TIME = range(3)
@@ -61,7 +60,7 @@ def reserve_time(update: Update, context: CallbackContext) -> int:
         _token['17fit_system_session'] = lines[2]
 
     # Reserve arguments
-    _court = tuple(COURTS[int(context.user_data['reserve_info']['court']) - 1])
+    _court = int(context.user_data['reserve_info']['court'])
     _date = context.user_data['reserve_info']['date']
     _time = context.user_data['reserve_info']['time']
 
@@ -70,7 +69,6 @@ def reserve_time(update: Update, context: CallbackContext) -> int:
         agent = BadmintonReserveAgent(_token)
         if agent.go(court=_court, date=_date, time=_time):
             agent_success(update, f'椰～成功預約第 {_court} 場 @ {_date} {_time}！')
-            pass
         else:
             agent_internal_error(update, '您指定的場地已經被預約了椰')
     except Exception:

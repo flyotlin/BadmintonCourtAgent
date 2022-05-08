@@ -5,7 +5,7 @@ from telegram import Update
 from telegram.ext import JobQueue
 from typing import List, TypedDict
 
-from src.callbacks import poll_callback, remind_callback, reserve_callback
+from src.job_worker.callbacks import poll_callback, remind_callback, reserve_callback
 
 
 Job = TypedDict('Job', {

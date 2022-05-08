@@ -121,7 +121,6 @@ class BadmintonReserveAgent():
         result = []
         for (court_idx, court) in zip(courts, matched_courts):
             self._set_current_court(court)
-            
             all_datetimes = self._get_provider_datetimes(f'{datetime.now().year}-{date}')
             for i in all_datetimes:
                 result.append({
