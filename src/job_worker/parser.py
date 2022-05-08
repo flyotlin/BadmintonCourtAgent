@@ -21,7 +21,7 @@ class JobWorkerParser:
 
     def parse(self, _args: List[str]) -> SubCommand:
         if len(_args) <= 0 or len(_args) >= 3:
-            return SubCommand.ERROR
+            raise JobWorkerParseError("check 後面不能接這些 args，請參考 /help check")
         if len(_args) == 1:
             if _args[0] == 'check':
                 return SubCommand.CHECK
@@ -29,14 +29,15 @@ class JobWorkerParser:
                 raise JobWorkerParseError("沒有此指令，請參考 /help check")
         if len(_args) == 2:
             if _args[0] == 'delete':
+                if not _args[1].isnumeric():
+                    raise JobWorkerParseError("delete id 要是數字椰，請參考 /help check")
                 self._args['id'] = int(_args[1])
                 return SubCommand.DELETE
             else:
-                # TODO: something wrong in days regex
-                if not re.match("([0-6]\,)*([0-6])", _args[0]):
+                if not re.match("^[0-6](,[0-6])*$", _args[0]):
                     raise JobWorkerParseError("星期格式錯誤，請參考 /help check")
                 # times
-                if not re.match("(([0-1][0-9]|2[0-3])\:([0-5][0-9]))(\,([0-1][0-9]|2[0-3])\:([0-5][0-9]))*", _args[1]):
+                if not re.match("^(([0-1][0-9]|2[0-3])\:([0-5][0-9]))(\,([0-1][0-9]|2[0-3])\:([0-5][0-9]))*$", _args[1]):
                     print('wrong times')
                     raise JobWorkerParseError("時間格式錯誤，請參考 /help check")
                 self._args['days'] = _args[0]
