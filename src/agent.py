@@ -3,6 +3,7 @@ import mechanicalsoup
 import re
 import requests
 
+from datetime import datetime
 from typing import Literal, TypedDict, List, Tuple
 
 
@@ -11,8 +12,14 @@ class BadmintonReserveAgent():
     Court = TypedDict('Court', {'member_id': int, 'member_name': str, 'role_relationships_id': int, 'level_price': int})
     Datetime = TypedDict('Datetime', {'available_role_relationship_ids': List[int], 'date': str, 'datetime': str, 'time': str})
     CourtAndDatetime = TypedDict('CourtAndDatetime', {'court': Court, 'datetime': Datetime})
+    CheckResult = TypedDict('CheckResult', {
+        'court_idx': int,
+        'date': str,
+        'time': str
+    })
 
     COURTS = Literal['近講臺右', '近講臺中', '近講臺左', '近門口右', '近門口中', '近門口左']
+    COURTS_LIST = ['近講臺右', '近講臺中', '近講臺左', '近門口右', '近門口中', '近門口左']
 
     def __init__(self, cookie: BaseCookie) -> None:
         self.browser = mechanicalsoup.StatefulBrowser(
@@ -50,15 +57,18 @@ class BadmintonReserveAgent():
 
         self.browser.post(SET_CURRENT_COURT_URL, court)
 
-    def _get_provider_datetimes(self) -> List[Datetime]:
+    def _get_provider_datetimes(self, date: str) -> List[Datetime]:
         """取得該場地目前所有日期
+
+        Args:
+            date (str): 日期 (e.g., 2022/05/09)
 
         Returns:
             List[Datetime]: _description_
         """
         GET_PROVIDER_DATETIME_URL = 'https://17fit.com/getServiceProviderDateTimeApi'
-
-        datetimes_json = self.browser.post(GET_PROVIDER_DATETIME_URL).json()
+        # TODO: post with date
+        datetimes_json = self.browser.post(GET_PROVIDER_DATETIME_URL, data={'date': date}).json()
         return datetimes_json
 
     def _set_current_datetime(self, time: Datetime) -> str:
@@ -74,7 +84,8 @@ class BadmintonReserveAgent():
         assert len(datetimes_json) == 1, 'datetimes: pattern did not matched'
         return json.loads(datetimes_json[0])[0]['id']
 
-    def _reserve(self, id) -> None:
+    def _reserve(self, id=28055) -> None:
+        # id is 羽球館 service id
         SET_RESERVE_URL = 'https://17fit.com/service-flow-make-appointment'
 
         self.browser.post(SET_RESERVE_URL, {
@@ -93,30 +104,59 @@ class BadmintonReserveAgent():
 
                 count_of_the_same_time[court_and_datetime['datetime']['datetime']] += 1
 
-    def check(self, time: str, courts: Tuple[COURTS]) -> List[CourtAndDatetime]:
+    def check(self, date: str, courts: Tuple[int]) -> List[CheckResult]:
+        """_summary_
+
+        Args:
+            date (str): 日期 (e.g., 05/09)
+            courts (Tuple[int]): 場地 (e.g., (1,2,4))
+
+        Returns:
+            List[CheckResult]: _description_
+        """
+        courts_names = tuple(map(lambda x: self.COURTS_LIST[x - 1], courts))
         all_courts = self._get_courts()
-        matched_courts = [x for x in all_courts if x['member_name'].endswith(courts)]
-        result: list[self.CourtAndDatetime] = []
+        matched_courts = [x for x in all_courts if x['member_name'].endswith(courts_names)]
 
-        for court in matched_courts:
+        result = []
+        for (court_idx, court) in zip(courts, matched_courts):
             self._set_current_court(court)
-            all_datetimes = self._get_provider_datetimes()
-            if any([x for x in all_datetimes if x['datatime'] == time]):
-                result.append({**court, **time})
 
+            all_datetimes = self._get_provider_datetimes(f'{datetime.now().year}-{date}')
+            for i in all_datetimes:
+                result.append({
+                    'court_idx': court_idx,
+                    'date': i['date'],
+                    'time': i['time']
+                })
         return result
 
-    def go(self, court_and_datetime: CourtAndDatetime) -> None:
+    def go(self, court: int, date: str, time: str) -> bool:
         """預約 courts, time 的場地
 
         Args:
-            time (str): "2022-04-29 18:00:00" 要預約的時間
-            courts (Tuple[COURTS]): 哪些場地 (參考 COURTS)
-            maximun_at_the_same_time (int): 同時預約的最多場地
+            court (int): 場地 (1-6)
+            date (str): "04-29" 要預約的日期
+            time (str): "18:00" 要預約的時間
 
         Returns:
             _type_: _description_
         """
-        self._set_current_court(court_and_datetime['court'])
-        self._set_current_datetime(court_and_datetime['datetime']['datetime'])
+        # prepare court
+        courts_names = self.COURTS_LIST[court - 1]
+        all_courts = self._get_courts()
+        courts_info = [x for x in all_courts if x['member_name'].endswith(courts_names)][0]
+        matched_courts = [x for x in all_courts if x['member_name'].endswith(courts_names)]
+
+        # prepare datetime
+        for _court in matched_courts:
+            self._set_current_court(_court)
+            all_datetimes = self._get_provider_datetimes(f'{datetime.now().year}-{date}')
+            for i in all_datetimes:
+                if i['time'] == time:
+                    datetimes_info = i
+
+        self._set_current_court(courts_info)
+        self._set_current_datetime(datetimes_info)
         self._reserve()
+        return True
