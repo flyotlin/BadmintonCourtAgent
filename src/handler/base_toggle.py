@@ -12,8 +12,9 @@ from src.util import agent_internal_error
 class BaseToggle:
     def __init__(self) -> None:
         pass
-
-    def get_toggle_handler(self, _name: str, _callback: callable, _worker_type: int) -> CommandHandler:
+    
+    @staticmethod
+    def get_toggle_handler(_name: str, _callback: callable, _worker_type: int) -> CommandHandler:
         def base_toggle_command(update: Update, context: CallbackContext) -> None:
             parser = JobWorkerParser()
             job_worker = JobWorker(_worker_type, update, context)

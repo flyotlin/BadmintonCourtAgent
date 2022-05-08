@@ -38,11 +38,9 @@ if __name__ == '__main__':
     dispatcher.add_handler(TokenHandler)
     dispatcher.add_handler(CheckHandler)
     dispatcher.add_handler(ReserveHandler)
-
-    baseToggle = BaseToggle()
-    dispatcher.add_handler(baseToggle.get_toggle_handler("toggle_remind", remind_callback, WorkerTypeEnum.REMIND))
-    dispatcher.add_handler(baseToggle.get_toggle_handler("toggle_poll", poll_callback, WorkerTypeEnum.POLL))
-    dispatcher.add_handler(baseToggle.get_toggle_handler("toggle_reserve", reserve_callback, WorkerTypeEnum.RESERVE))
+    dispatcher.add_handler(BaseToggle.get_toggle_handler("toggle_remind", remind_callback, WorkerTypeEnum.REMIND))
+    dispatcher.add_handler(BaseToggle.get_toggle_handler("toggle_poll", poll_callback, WorkerTypeEnum.POLL))
+    dispatcher.add_handler(BaseToggle.get_toggle_handler("toggle_reserve", reserve_callback, WorkerTypeEnum.RESERVE))
 
     updater.start_polling()
 
