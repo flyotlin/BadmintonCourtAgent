@@ -1,0 +1,22 @@
+- name: Lint, Test, Deploy BadmintonCourtAgent
+  on:
+    push:
+      branches: [ master ]
+    pull_request:
+      branches: [ master ]
+  jobs:
+    lint:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Check out repo
+          uses: actions/checkout@v3
+        - name: Set up python 3.8.8
+          uses: actions/setup-python@v2
+          with:
+            python-version: "3.8.8"
+        - name: Install flake8
+          run:  |
+            python3 -m pip install flake8
+        - name: Lint the code with flake8
+          run: |
+            python3 -m flake8 .
