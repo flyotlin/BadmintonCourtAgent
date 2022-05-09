@@ -11,6 +11,11 @@ Execute: `$ ansible-playbook deploy.yaml`
 
 > Remember to open your port 27017 to allow the Bot to accept request from Internet.
 
+## Latest Docker Image
+You can check on [DockerHub](https://hub.docker.com/repository/docker/flyotlin/badminton-court-agent)!
+
+Our CI/CD pipeline would update the latest image on DockerHub whenever new code is checked in to branch master.
+
 ## Chat-bot Commands
 - `/help`: 查看可用的阿椰指令，加上 command (optional) 後有更詳細說明
 - `/token`: 設定 token
