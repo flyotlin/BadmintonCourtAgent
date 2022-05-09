@@ -1,3 +1,4 @@
+import configparser
 import logging
 
 from telegram.ext import Updater
@@ -17,8 +18,9 @@ from src.util import load_jobs_from_file
 
 
 # Need to set webhook on
-TOKEN = ""
-
+config = configparser.ConfigParser()
+config.read('.telegram-bot-conf')
+TOKEN = config['bot']['token']
 
 # Enable logging
 logging.basicConfig(

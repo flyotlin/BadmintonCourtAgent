@@ -1,19 +1,27 @@
+import configparser
 import logging
 import os
 
 from telegram.ext import Updater
 
+from src.enums import WorkerTypeEnum
 from src.handler.help import HelpHandler
 from src.handler.token import TokenHandler
 from src.handler.check import CheckHandler
 from src.handler.reserve import ReserveHandler
-from src.handler.toggle_poll import TogglePollHandler
-from src.handler.toggle_remind import ToggleRemindHandler
-from src.handler.toggle_reserve import ToggleReserveHandler
+from src.handler.base_toggle import BaseToggle
 from src.util import load_jobs_from_file
+from src.job_worker.callbacks import (
+    remind_callback,
+    poll_callback,
+    reserve_callback
+)
+
 
 # Need to set webhook on
-TOKEN = ""
+config = configparser.ConfigParser()
+config.read('.telegram-bot-conf')
+TOKEN = config['bot']['token']
 
 
 # Enable logging
@@ -34,11 +42,16 @@ if __name__ == '__main__':
     dispatcher.add_handler(TokenHandler)
     dispatcher.add_handler(CheckHandler)
     dispatcher.add_handler(ReserveHandler)
-    dispatcher.add_handler(TogglePollHandler)
-    dispatcher.add_handler(ToggleRemindHandler)
-    dispatcher.add_handler(ToggleReserveHandler)
+    dispatcher.add_handler(BaseToggle.get_toggle_handler("toggle_remind", remind_callback, WorkerTypeEnum.REMIND))
+    dispatcher.add_handler(BaseToggle.get_toggle_handler("toggle_poll", poll_callback, WorkerTypeEnum.POLL))
+    dispatcher.add_handler(BaseToggle.get_toggle_handler("toggle_reserve", reserve_callback, WorkerTypeEnum.RESERVE))
 
     port = int(os.environ.get('PORT', 27017))
-    updater.start_webhook(listen='0.0.0.0', port=port, url_path='', webhook_url='')
+    updater.start_webhook(
+        listen='0.0.0.0',
+        port=port,
+        url_path=config['bot']['url_path'],
+        webhook_url=config['bot']['webhook_url']
+    )
 
     updater.idle()
