@@ -13,7 +13,7 @@ COURTS = ['近講臺右', '近講臺中', '近講臺左', '近門口右', '近�
 TOKEN_FILE = '.token'
 
 
-def reserve(update: Update, context: CallbackContext) -> int:
+def reserve_command(update: Update, context: CallbackContext) -> int:
     update.message.reply_text(
         '你好，我是羽球場預約小幫手 - 阿椰！\n'
         '接下來我會幫助你預約羽球場，請依照指示填入要預約的羽球場資訊\n'
@@ -88,7 +88,7 @@ def cancel(update: Update, context: CallbackContext) -> int:
 
 
 ReserveHandler = ConversationHandler(
-    entry_points=[CommandHandler('reserve', reserve)],
+    entry_points=[CommandHandler('reserve', reserve_command)],
     states={
         STAGE_COURT: [MessageHandler(Filters.regex('^[1-6]$'), reserve_court)],
         STAGE_DATE: [MessageHandler(Filters.regex('^(1[0-2]|0[1-9])\-([0-2][1-9]|3[0-1])$'), reserve_date)],

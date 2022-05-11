@@ -1,7 +1,7 @@
 from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import CommandHandler, CallbackContext, ConversationHandler, MessageHandler, Filters
 
-PHP, XSRF, SYS_SESSION = range(3)
+STAGE_PHP, STAGE_XSRF, STAGE_SYS_SESSION = range(3)
 TOKEN_FILE = '.token'
 
 
@@ -13,22 +13,31 @@ def token_command(update: Update, context: CallbackContext) -> int:
     )
     update.message.reply_text('php_session: \n')
 
-    return PHP
+    return STAGE_PHP
 
 
-def php(update: Update, context: CallbackContext) -> int:
+def token_php(update: Update, context: CallbackContext) -> int:
+    if update.message.text == '/cancel':
+        return cancel(update, context)
+
     context.user_data['php_session'] = update.message.text
     update.message.reply_text('xsrf_token: \n')
-    return XSRF
+    return STAGE_XSRF
 
 
-def xsrf(update: Update, context: CallbackContext) -> int:
+def token_xsrf(update: Update, context: CallbackContext) -> int:
+    if update.message.text == '/cancel':
+        return cancel(update, context)
+
     context.user_data['xsrf_token'] = update.message.text
     update.message.reply_text('system_session: \n')
-    return SYS_SESSION
+    return STAGE_SYS_SESSION
 
 
-def sys_session(update: Update, context: CallbackContext) -> int:
+def token_sys_session(update: Update, context: CallbackContext) -> int:
+    if update.message.text == '/cancel':
+        return cancel(update, context)
+
     context.user_data['system_session'] = update.message.text
 
     with open(TOKEN_FILE, 'w', encoding='utf-8') as f:
@@ -55,9 +64,8 @@ def cancel(update: Update, context: CallbackContext) -> int:
 TokenHandler = ConversationHandler(
     entry_points=[CommandHandler('token', token_command)],
     states={
-        PHP: [MessageHandler(Filters.regex('^.*$'), php)],
-        XSRF: [MessageHandler(Filters.regex('^.*$'), xsrf)],
-        SYS_SESSION: [MessageHandler(Filters.regex('^.*$'), sys_session)]
-    },
-    fallbacks=[CommandHandler('cancel', cancel)],
+        STAGE_PHP: [MessageHandler(Filters.regex('^.*$'), token_php)],
+        STAGE_XSRF: [MessageHandler(Filters.regex('^.*$'), token_xsrf)],
+        STAGE_SYS_SESSION: [MessageHandler(Filters.regex('^.*$'), token_sys_session)]
+    }
 )
