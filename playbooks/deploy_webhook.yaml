@@ -1,0 +1,25 @@
+---
+- name: Deploy Telegram Bot BadmintonCourtAgent to your Server
+  hosts: localhost
+  vars:
+    base: lookup('env', 'BASE_DIRECTORY')
+    host_port: 27017
+    container_port: 27017
+  tasks:
+    - name: Create Telegram Bot Conf File
+      copy:
+        dest: "{{ base }}/.telegram-bot-conf"
+        content: |
+          [bot]
+          token={{ lookup('env', 'TELEGRAM_BOT_TOKEN') }}
+          url_path={{ lookup('env', 'TELEGRAM_BOT_URL_PATH') }}
+          webhook_url={{ lookup('env', 'TELEGRAM_BOT_WEBHOOK_URL') }}
+    - name: Log in to DockerHub
+      docker_login:
+        username: {{ lookup('env', 'DOCKERHUB_USERNAME') }}
+        password: {{ lookup('env', 'DOCKERHUB_TOKEN') }}
+    - name: Run BadmintonCourtAgent Bot in a Container
+      docker_container:
+        name: badminton_court_agent_bot
+        image: flyotlin/badminton-court-agent:latest
+        published_ports: "{{ host_port }}:{{ container_port }}"
