@@ -67,5 +67,6 @@ TokenHandler = ConversationHandler(
         STAGE_PHP: [MessageHandler(Filters.regex('^.*$'), token_php)],
         STAGE_XSRF: [MessageHandler(Filters.regex('^.*$'), token_xsrf)],
         STAGE_SYS_SESSION: [MessageHandler(Filters.regex('^.*$'), token_sys_session)]
-    }
+    },
+    fallbacks=[CommandHandler('cancel', cancel)]
 )

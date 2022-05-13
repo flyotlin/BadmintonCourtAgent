@@ -14,7 +14,7 @@ from src.util import (
 
 
 class JobWorker:
-    db_file = '.job-queue.db'
+    db_file = 'job-queue.db'
 
     def __init__(self, worker_type: int, update: Update, context: CallbackContext) -> None:
         """_summary_
@@ -27,7 +27,7 @@ class JobWorker:
         self._handler_update = update
         self._handler_context = context
 
-        self._worker_type = worker_type
+        self._worker_type = worker_type.value
         self._chat_room_id = self._handler_update.message.chat_id
 
         self._days: Tuple[int] = None

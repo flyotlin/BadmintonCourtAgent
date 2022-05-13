@@ -4,6 +4,6 @@
 *.env
 .job_queue
 .token
-.telegram-bot-token
+.telegram-bot-conf
 src/legacy
 .job-queue-local.db
