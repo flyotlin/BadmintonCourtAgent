@@ -14,7 +14,7 @@ from src.util import (
 
 
 class JobWorker:
-    db_file = 'job-queue.db'
+    db_file = 'db/job-queue.db'
 
     def __init__(self, worker_type: int, update: Update, context: CallbackContext) -> None:
         """_summary_
