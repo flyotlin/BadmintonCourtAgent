@@ -35,8 +35,6 @@ def check_command(update: Update, context: CallbackContext) -> None:
     else:
         _court = tuple(map(int, _court.split(',')))
 
-    _court = tuple(map(lambda x: COURTS[x - 1], _court))
-
     # Token
     if not os.path.isfile(TOKEN_FILE):
         agent_internal_error(update, '請使用指令 /token 設定 token')
@@ -60,7 +58,7 @@ def check_command(update: Update, context: CallbackContext) -> None:
 
         reply_str = ''
         for i in check_results:
-            reply_str += f"第 {i['court_idx']} 場: {i['date']} {i['time']}"
+            reply_str += f"第 {i['court_idx']} 場: {i['date']} {i['time']}\n"
         update.message.reply_text(reply_str)
     except Exception:
         traceback.print_exc()
