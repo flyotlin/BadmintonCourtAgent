@@ -55,9 +55,9 @@ def reserve_callback(context: CallbackContext):
     finally:
         if len(not_available_courts) == 0:
             return
-        reply_str = '目前無法預約：\n'
-        for i in not_available_courts:
-            reply_str += f'{i[1]} {i[2]} @ 第{i[0]} 場\n'
+        reply_str = '某些場地無法自動預約\n'
+        # for i in not_available_courts:
+        #     reply_str += f'{i[1]} {i[2]} @ 第{i[0]} 場\n'
         context.bot.send_message(chat_id=job.context, text=reply_str)
 
 
