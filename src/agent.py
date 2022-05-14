@@ -148,16 +148,16 @@ class BadmintonReserveAgent():
         matched_courts = [x for x in all_courts if x['member_name'].endswith(courts_names)]
 
         # prepare datetime
+        datetimes_info = None
+
         for _court in matched_courts:
             self._set_current_court(_court)
             all_datetimes = self._get_provider_datetimes(f'{datetime.now().year}-{date}')
-            if len(all_datetimes) == 0:
-                return False
             for i in all_datetimes:
                 if i['time'] == time:
                     datetimes_info = i
 
-        if len(datetimes_info) == 0:
+        if not datetimes_info:
             return False
 
         self._set_current_court(courts_info)
