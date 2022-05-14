@@ -26,7 +26,7 @@ def check_command(update: Update, context: CallbackContext) -> None:
     if not re.match("([1-6]\,)*([1-6])", _court) and _court != "all":
         agent_argument_error(update, COMMAND)
         return
-    if not re.match("(0[1-9]|1[0-2])\-([0-2][1-9]|3[0-1])", _date):
+    if not re.match("(0[1-9]|1[0-2])\-([0-2][0-9]|3[0-1])", _date):
         agent_argument_error(update, COMMAND)
         return
 
@@ -59,6 +59,8 @@ def check_command(update: Update, context: CallbackContext) -> None:
         reply_str = ''
         for i in check_results:
             reply_str += f"第 {i['court_idx']} 場: {i['date']} {i['time']}\n"
+        if reply_str == '':
+            reply_str = f'目前 {_date} 沒有空場地椰～'
         update.message.reply_text(reply_str)
     except Exception:
         traceback.print_exc()

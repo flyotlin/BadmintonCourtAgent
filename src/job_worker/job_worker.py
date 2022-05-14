@@ -59,7 +59,7 @@ class JobWorker:
         return
 
     def check(self) -> None:
-        jobs = self._select_all_jobs_from_db()
+        jobs = self._select_all_jobs_from_db_by_job_type()
 
         reply_msg = 'id\t小時\t分鐘\n'
         ID_IDX, HOUR_IDX, MINUTE_IDX = 0, 1, 2
@@ -85,9 +85,6 @@ class JobWorker:
 
         agent_success(self._handler_update, f"成功刪除 job {job_db_id}!")
         return
-
-    def load(self) -> None:
-        pass
 
     def _set_job_queue(self, _time: datetime.time, job_name: str) -> bool:
         TAIPEI_GMT_TIME_DELTA = -8
@@ -140,6 +137,13 @@ class JobWorker:
         return True
 
     def _select_all_jobs_from_db(self) -> List[tuple]:
+        with sqlite3.connect(self.db_file) as connection:
+            cursor = connection.cursor()
+            cursor.execute("SELECT * FROM Job JOIN JobDay on Job.id=JobDay.job_id")
+            rows = cursor.fetchall()
+            return rows
+
+    def _select_all_jobs_from_db_by_job_type(self) -> List[tuple]:
         """Select all rows (jobs) from table Job.
 
         Returns:

@@ -70,7 +70,7 @@ def reserve_time(update: Update, context: CallbackContext) -> int:
         if agent.go(court=_court, date=_date, time=_time):
             agent_success(update, f'椰～成功預約第 {_court} 場 @ {_date} {_time}！')
         else:
-            agent_internal_error(update, '您指定的場地已經被預約了椰')
+            agent_internal_error(update, '您指定的場地目前無法預約椰')
     except Exception:
         print(traceback.print_exc())
         agent_internal_error(update, '預約失敗，可能的原因為 token 失效、場地已被預約...')
@@ -91,7 +91,7 @@ ReserveHandler = ConversationHandler(
     entry_points=[CommandHandler('reserve', reserve_command)],
     states={
         STAGE_COURT: [MessageHandler(Filters.regex('^[1-6]$'), reserve_court)],
-        STAGE_DATE: [MessageHandler(Filters.regex('^(1[0-2]|0[1-9])\-([0-2][1-9]|3[0-1])$'), reserve_date)],
+        STAGE_DATE: [MessageHandler(Filters.regex('^(1[0-2]|0[1-9])\-([0-2][0-9]|3[0-1])$'), reserve_date)],
         STAGE_TIME: [MessageHandler(Filters.regex('^(0[1-9]|1[0-9]|2[0-4]):00$'), reserve_time)]
     },
     fallbacks=[CommandHandler('cancel', cancel)],
