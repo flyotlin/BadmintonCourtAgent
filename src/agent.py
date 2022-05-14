@@ -157,6 +157,9 @@ class BadmintonReserveAgent():
                 if i['time'] == time:
                     datetimes_info = i
 
+        if len(datetimes_info) == 0:
+            return False
+
         self._set_current_court(courts_info)
         self._set_current_datetime(datetimes_info)
         self._reserve()
