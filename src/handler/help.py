@@ -96,6 +96,11 @@ def help_command(update: Update, context: CallbackContext) -> None:
         help_main(update)
         return
 
+    all_available_commands_text = list(map(lambda x: x[0], all_available_commands))
+    if context.args[0] not in all_available_commands_text:
+        update.message.reply_text("不了解你的指令，阿椰只支援 /help 列出的指令")
+        return
+
     for command in all_available_commands:
         if context.args[0] == command[0]:
             command[1](update)
