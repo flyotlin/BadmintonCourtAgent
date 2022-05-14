@@ -43,29 +43,37 @@ def help_reserve(update: Update):
 
 def help_toggle_poll(update: Update):
     update.message.reply_text(
-        '/toggle_poll [ <delete | <days> <time> ]: 自動開啟投票\n\n'
-        '目前預設 每週二 / 四 晚上 8:00 開啟隔天是否打球的投票\n'
-        'delete: 字串 "delete" 可以刪除設定的預約提醒，要設定新的預約前需要刪除舊的預約\n'
+        '/toggle_poll [ <check | delete <id> | <days> <times> ]: 自動開啟投票\n\n'
+        '設定於固定時間自動開啟投票\n'
+        'check: 檢查已經設定的自動開啟投票排程\n'
+        'delete: 字串 "delete" 可以刪除設定的預約提醒\n'
+        'id: 於 check 中查詢\n'
         'days: 星期一 ~ 星期日 (0 ~ 6)，以逗號分隔, e.g., 0,2,3\n'
-        'time: 台灣時間，24 小時制 (e.g., 14:28)\n'
+        'times: 台灣時間，24 小時制，以逗號分隔 (e.g., 14:28,15:00)\n'
     )
 
 
 def help_toggle_remind(update: Update):
     update.message.reply_text(
-        '/toggle_remind [ <delete> | <day> <time> ]: 自動傳送預約提醒訊息\n\n'
-        '目前於 每週六 15:00 自動傳送預約提醒訊息\n'
-        'delete: 字串 "delete" 可以刪除設定的預約提醒，要設定新的預約前需要刪除舊的預約\n'
-        'day: 星期一 ~ 星期日 (0 ~ 6)，type int\n'
-        'time: 台灣時間，24 小時制 (e.g., 14:28)\n'
+        '/toggle_remind [ <check | delete <id> | <days> <times> ]: 自動傳送預約提醒訊息\n\n'
+        '設定於固定時間自動傳送提醒訊息\n'
+        'check: 檢查已經設定的自動開啟投票排程\n'
+        'delete: 字串 "delete" 可以刪除設定的預約提醒\n'
+        'id: 於 check 中查詢\n'
+        'days: 星期一 ~ 星期日 (0 ~ 6)，以逗號分隔, e.g., 0,2,3\n'
+        'times: 台灣時間，24 小時制，以逗號分隔 (e.g., 14:28,15:00)\n'
     )
 
 
 def help_toggle_reserve(update: Update):
     update.message.reply_text(
-        '/toggle_reserve [ <delete> ]: 自動預約場地\n\n'
-        '自動在每天 10:00, 15:00, 20:00 預約 週三/週五 20:00, 21:00 講台近中 (第 2 場) 場地\n'
-        'delete: 字串 "delete" 可以刪除設定的預約提醒，要設定新的預約前需要刪除舊的預約\n'
+        '/toggle_reserve [ <check | delete <id> | <days> <times> ]: 自動預約場地\n\n'
+        '設定於固定時間自動預約第 1, 3 場，星期三、五，晚上 8:00, 9:00\n'
+        'check: 檢查已經設定的自動開啟投票排程\n'
+        'delete: 字串 "delete" 可以刪除設定的預約提醒\n'
+        'id: 於 check 中查詢\n'
+        'days: 星期一 ~ 星期日 (0 ~ 6)，以逗號分隔, e.g., 0,2,3\n'
+        'times: 台灣時間，24 小時制，以逗號分隔 (e.g., 14:28,15:00)\n'
     )
 
 
