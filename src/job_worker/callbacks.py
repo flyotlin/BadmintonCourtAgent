@@ -29,37 +29,36 @@ def reserve_callback(context: CallbackContext):
         _token['17fit_system_session'] = lines[2]
 
     # Reserve arguments
-    _court = ('近講臺中')
-
     now = datetime.now()
-    last_delta = now.weekday() - 1
-    next_delta = 8 - now.weekday()
-    _time = []
-    _time.extend([now - timedelta(last_delta + i * 7) for i in range(2)])
-    _time.extend([now + timedelta(next_delta + i * 7) for i in range(2)])
-    _reserve_times = []
-    for t in ["20:00", "21:00"]:
-        for d in _time:
-            _reserve_times.extend([f"{d.year}-{d.month:02}-{d.day:02} {t}:00"])
+    next_delta = 9 - now.weekday()
+    _date = []
+    _date.extend([now + timedelta(next_delta + i * 7) for i in range(2)])
+    _date.extend([now + timedelta((next_delta + 2) + i * 7) for i in range(2)])
+    _date = tuple(map(lambda x: f'{x.month:02}-{x.day:02}', _date))
+    _court = (1, 3)
+    _time = ("20:00", "21:00")
 
     # Reserve with `Token` and `Arguments`
     try:
+        not_available_courts = []
         agent = BadmintonReserveAgent(_token)
-
-        court_and_datetimes = []
-        for reserve_time in _reserve_times:
-            court_and_datetimes += agent.check(time=reserve_time, courts=_court)
-
-        for court_and_datetime in court_and_datetimes:
-            agent.go(court_and_datetime)
-
-            # TODO: send success preserve message to telegram (by Cliff)
-            context.bot.send_message(chat_id=job.context, text=f"reserve court {court_and_datetime['court']['member_name']} at {court_and_datetime['datetime']['datetime']} success!")
-        else:
-            context.bot.send_message(chat_id=job.context, text='您指定的場地已經被預約了椰')
+        for i in _court:
+            for j in _date:
+                for k in _time:
+                    if agent.go(court=i, date=j, time=k):
+                        context.bot.send_message(chat_id=job.context, text=f'椰～成功自動預約第 {_court} 場 @ {_date} {_time}！')
+                    else:
+                        not_available_courts.append([i, j, k])
     except Exception:
         print(traceback.print_exc())
         context.bot.send_message(chat_id=job.context, text='預約失敗，可能的原因為 token 失效、場地已被預約...')
+    finally:
+        if len(not_available_courts) == 0:
+            return
+        reply_str = '目前無法預約：\n'
+        for i in not_available_courts:
+            reply_str += f'{i[1]} {i[2]} @ 第{i[0]} 場\n'
+        context.bot.send_message(chat_id=job.context, text=reply_str)
 
 
 def poll_callback(context: CallbackContext):
