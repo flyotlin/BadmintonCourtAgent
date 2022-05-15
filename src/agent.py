@@ -114,6 +114,18 @@ class BadmintonReserveAgent():
         Returns:
             List[CheckResult]: _description_
         """
+        if not re.match("^(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$", date):
+            raise ValueError(f"{date} not match format %m-%d")
+
+        if type(courts) != tuple:
+            raise ValueError("Courts is not a tuple")
+
+        for i in courts:
+            if type(i) != int:
+                raise ValueError("Courts element is not an int")
+            if i < 1 or i > 6:
+                raise ValueError("Courts element not between 1 and 6")
+
         courts_names = tuple(map(lambda x: self.COURTS_LIST[x - 1], courts))
         all_courts = self._get_courts()
         matched_courts = [x for x in all_courts if x['member_name'].endswith(courts_names)]
