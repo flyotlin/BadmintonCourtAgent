@@ -37,7 +37,7 @@ class TestAgentCheck(unittest.TestCase):
         self.assertIn("not match format", str(value_error.exception))
 
     def test_date_month_without_zero_padding(self):
-        _date = '5/10'
+        _date = '5-10'
         _courts = (1, 2, 4)
 
         with self.assertRaises(ValueError) as value_error:
@@ -45,7 +45,7 @@ class TestAgentCheck(unittest.TestCase):
         self.assertIn("not match format", str(value_error.exception))
 
     def test_date_day_without_zero_padding(self):
-        _date = '05/1'
+        _date = '05-1'
         _courts = (1, 2, 4)
 
         with self.assertRaises(ValueError) as value_error:

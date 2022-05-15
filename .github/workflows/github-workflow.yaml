@@ -34,6 +34,7 @@ jobs:
           python-version: "3.8.8"
       - name: Run tests
         run:  |
+          python3 -m pip install -r requirements.txt
           python3 -m unittest tests/run_all_tests.py
   build-image:
     runs-on: ubuntu-latest
