@@ -64,7 +64,7 @@ jobs:
       - name: Deploy to Server through ssh
         uses: appleboy/ssh-action@master
         with:
-          hosts: ${{ secrets.SERVER_IP }}
+          host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT }}
