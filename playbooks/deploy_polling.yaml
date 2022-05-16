@@ -3,9 +3,10 @@
   hosts: localhost
   vars:
     base: lookup('env', 'BASE_DIRECTORY')
-    host_port: 27017
-    container_port: 27017
   tasks:
+    - name: Create logs folder
+      file:
+        path: "{{ base }}/logs"
     - name: Create Telegram Bot Conf File
       copy:
         dest: "{{ base }}/.telegram-bot-conf"
@@ -20,4 +21,6 @@
       docker_container:
         name: badminton_court_agent_bot
         image: flyotlin/badminton-court-agent:polling
-        published_ports: "{{ host_port }}:{{ container_port }}"
+        volumes:
+          - "{{ base }}/logs:/app/logs"
+          - "{{ base }}/db:/app/db"
