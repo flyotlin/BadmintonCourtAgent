@@ -6,4 +6,5 @@
 .token
 .telegram-bot-conf
 src/legacy
-.job-queue-local.db
+**/job-queue-local.db
+**/.job-queue-local.db
