@@ -29,14 +29,9 @@ def reserve_callback(context: CallbackContext):
         _token['17fit_system_session'] = lines[2]
 
     # Reserve arguments
-    now = datetime.now()
-    next_delta = 9 - now.weekday()
-    _date = []
-    _date.extend([now + timedelta(next_delta + i * 7) for i in range(2)])
-    _date.extend([now + timedelta((next_delta + 2) + i * 7) for i in range(2)])
-    _date = tuple(map(lambda x: f'{x.month:02}-{x.day:02}', _date))
-    _court = (1, 3)
-    _time = ("20:00", "21:00")
+    _date = get_date([3, 5])
+    _court = get_court([2])
+    _time = get_time(['21:00'])
 
     # Reserve with `Token` and `Arguments`
     try:
@@ -84,3 +79,25 @@ def poll_callback(context: CallbackContext):
 def remind_callback(context: CallbackContext):
     job = context.job
     context.bot.send_message(chat_id=job.context, text='記得預約羽球場喔～')
+
+
+def get_court(courts: list):
+    return tuple(courts)
+
+
+def get_time(times: list):
+    return tuple(times)
+
+
+def get_date(days: list):
+    now = datetime.now()
+    _date = []
+
+    for d in days:
+        d = d - 1
+        next_delta = ((d + 7) - now.weekday()) % 7
+        _date.extend([now + timedelta(next_delta + i * 7) for i in range(2)])
+
+    _date = tuple(map(lambda x: f'{x.month:02}-{x.day:02}', _date))
+
+    return _date
