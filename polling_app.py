@@ -14,6 +14,7 @@ from src.handler.help import HelpHandler
 from src.handler.token import TokenHandler
 from src.handler.check import CheckHandler
 from src.handler.reserve import ReserveHandler
+from src.handler.machine import MachineHandler
 from src.handler.base_toggle import BaseToggle
 from src.job_worker.loader import Loader
 
@@ -26,6 +27,7 @@ def set_chatbot_handlers(updater: Updater):
     dispatcher.add_handler(TokenHandler)
     dispatcher.add_handler(CheckHandler)
     dispatcher.add_handler(ReserveHandler)
+    dispatcher.add_handler(MachineHandler)
     dispatcher.add_handler(BaseToggle.get_toggle_handler("toggle_remind", remind_callback, WorkerTypeEnum.REMIND))
     dispatcher.add_handler(BaseToggle.get_toggle_handler("toggle_poll", poll_callback, WorkerTypeEnum.POLL))
     dispatcher.add_handler(BaseToggle.get_toggle_handler("toggle_reserve", reserve_callback, WorkerTypeEnum.RESERVE))
