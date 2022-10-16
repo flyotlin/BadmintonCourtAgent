@@ -6,10 +6,10 @@ from src.json_reader import MessageReader
 
 class HelpHandler(CommandHandler):
     def __init__(self):
-        self.command = "help"
+        self.handler_command = "help"
         self.reader = MessageReader()
 
-        super().__init__(self.command, self.help_command())
+        super().__init__(self.handler_command, self.help_command())
 
     def help_command(self) -> callable:
         def callback(update: Update, context: CallbackContext):
