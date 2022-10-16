@@ -1,5 +1,5 @@
 from src.db_mgr import SqliteDatabaseMgr
-from src.db_models import User as UserModel
+from src.db_models import UserModel
 
 
 class User:
