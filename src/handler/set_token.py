@@ -3,7 +3,7 @@ from telegram.ext import CommandHandler, CallbackContext, ConversationHandler, F
 
 from src.handler.help import HelpHandler
 from src.json_reader import MessageReader
-from src.user import User
+from src.object import User
 
 
 class SetTokenHandler(ConversationHandler):
