@@ -14,7 +14,7 @@ class JsonReader:
 
 class MessageReader(JsonReader):
     def __init__(self, path=None) -> None:
-        if path == None:
+        if path is None:
             pwd = os.path.abspath(os.path.dirname(__file__))
             path = os.path.join(pwd, "../resource/messages.json")
 
@@ -37,4 +37,4 @@ class MessageReader(JsonReader):
 
     def _replace_variables(self, msg: str, key: str, value: str) -> None:
         key, value = str(key), str(value)
-        return msg.replace(f"{{{{{key}}}}}", value) # 1 {{}} can escape {}
+        return msg.replace(f"{{{{{key}}}}}", value)  # 1 {{}} can escape {}

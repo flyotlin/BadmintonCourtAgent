@@ -37,6 +37,6 @@ class HelpHandler(CommandHandler):
         key = f"help_{command}"
         try:
             reply_msg = self.reader.get(key)
-        except Exception as e:
+        except Exception:
             reply_msg = self.reader.get("help_error", command=command)
         update.message.reply_text(reply_msg)

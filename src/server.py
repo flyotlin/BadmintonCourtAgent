@@ -9,10 +9,10 @@ from src.handler.set_token import SetTokenHandler
 from src.handler.snap_courts import SnapCourtsHandler
 
 
-"""
-Choose either `start_polling()` or `start_webhook()`
-"""
 class AyeServer:
+    """
+    Choose either `start_polling()` or `start_webhook()`
+    """
     TypeBotConf = TypedDict("TypeBotConf", {
         "token": str
     })
@@ -32,7 +32,6 @@ class AyeServer:
 
     def _set_logger(self):
         logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-        logger = logging.getLogger(__name__)
 
     def _get_bot_conf(self, path: str):
         config = configparser.ConfigParser()

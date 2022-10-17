@@ -34,7 +34,7 @@ class SetTokenHandler(ConversationHandler):
             if context.args[0] == "help" and args_len == 1:
                 self.help(update)
                 return
-            self.reply("command_error", update, get_options={"command": context.args[0]})
+            self.reply("command_error", update, replaced_vars={"command": context.args[0]})
         return callback
 
     def stage_php(self) -> callable:
@@ -79,6 +79,6 @@ class SetTokenHandler(ConversationHandler):
         helpHandler = HelpHandler()
         helpHandler.help_individual_command(self.handler_command, update)
 
-    def reply(self, key, update: Update, get_options: dict={}, reply_options: dict={}):
-        reply_msg = self.reader.get(key, **get_options)
+    def reply(self, key, update: Update, replaced_vars: dict = {}, reply_options: dict = {}):
+        reply_msg = self.reader.get(key, **replaced_vars)
         update.message.reply_text(reply_msg, **reply_options)

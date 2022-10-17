@@ -79,6 +79,6 @@ class SnapCourtsHandler(CommandHandler):
         service = VacantCourtService()
         service.snap(update, context, date, court, time)
 
-    def reply(self, key, update: Update, replaced_vars: dict={}, reply_options: dict={}):
+    def reply(self, key, update: Update, replaced_vars: dict = {}, reply_options: dict = {}):
         reply_msg = self.reader.get(key, **replaced_vars)
         update.message.reply_text(reply_msg, **reply_options)

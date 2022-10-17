@@ -22,7 +22,7 @@ class CheckCourtsHandler(CommandHandler):
             if self.is_check_courts(context.args):
                 self.check_courts(update, context)
                 return
-            self.reply("command_error", update, get_options={"command": context.args[0]})
+            self.reply("command_error", update, replaced_vars={"command": context.args[0]})
         return callback
 
     def check_courts(self, update: Update, context: CallbackContext):
@@ -35,7 +35,7 @@ class CheckCourtsHandler(CommandHandler):
         if courts is None:
             self.reply("token_not_exist_error", update)
         reply_msg = service.gen_reply_msg(courts)
-        self.reply(f"{self.handler_command}_main", update, get_options={"message": reply_msg})
+        self.reply(f"{self.handler_command}_main", update, replaced_vars={"message": reply_msg})
 
     def is_help(self, args) -> bool:
         if args[0] == "help" and len(args) == 1:
@@ -62,6 +62,6 @@ class CheckCourtsHandler(CommandHandler):
         helpHandler = HelpHandler()
         helpHandler.help_individual_command(self.handler_command, update)
 
-    def reply(self, key, update: Update, get_options: dict={}, reply_options: dict={}):
-        reply_msg = self.reader.get(key, **get_options)
+    def reply(self, key, update: Update, replaced_vars: dict = {}, reply_options: dict = {}):
+        reply_msg = self.reader.get(key, **replaced_vars)
         update.message.reply_text(reply_msg, **reply_options)

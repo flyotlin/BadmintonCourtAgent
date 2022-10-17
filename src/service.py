@@ -25,7 +25,7 @@ class VacantCourtService:
 
     def gen_reply_msg(self, courts: List[VacantCourt]) -> str:
         if len(courts) == 0:
-            return f"目前沒有空場地椰～"
+            return "目前沒有空場地椰～"
 
         reply_msg = ""
         for i in courts:

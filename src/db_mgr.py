@@ -29,7 +29,7 @@ class DatabaseMgr:
         session.commit()
         return rows
 
-    def update(self, model, filters: dict={}, values: dict={}):
+    def update(self, model, filters: dict = {}, values: dict = {}):
         session = self.session_maker()
 
         row = session.query(model).filter_by(**filters).first()
@@ -51,7 +51,7 @@ class DatabaseMgr:
 
 class SqliteDatabaseMgr(DatabaseMgr):
     def __init__(self, path=None) -> None:
-        if path == None:
+        if path is None:
             pwd = os.path.abspath(os.path.dirname(__file__))
             path = os.path.join(pwd, "../badminton-court-agent.sql")
 
