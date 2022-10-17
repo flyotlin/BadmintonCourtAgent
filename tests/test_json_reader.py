@@ -6,7 +6,7 @@ from src.json_reader import MessageReader
 
 
 class TestMessageReader(unittest.TestCase):
-    def setUp(self) -> None:
+    def setUp(self) -> None: 
         pwd = os.path.abspath(os.path.dirname(__file__))
         self.path = os.path.join(pwd, "../resource/test_messages.json")
 
