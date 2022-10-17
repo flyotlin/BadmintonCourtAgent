@@ -12,6 +12,13 @@ class User:
         self._xsrf_token = ""
         self._system_session = ""
 
+    def get_token(self):
+        return {
+            "PHPSESSID": self._php_session,
+            "XSRF-TOKEN": self._xsrf_token,
+            "17fit_system_session": self._system_session
+        }
+
     def set_php_session(self, val):
         self._php_session = val
 
@@ -46,3 +53,16 @@ class User:
                     "system_session": self._system_session
                 }
             )
+
+
+class VacantCourt:
+    def __init__(self, court_idx: int, date: str, time: str) -> None:
+        self._court_idx = court_idx
+        self._date = date
+        self._time = time
+
+    def string(self) -> str:
+        return f"第 {self._court_idx} 場: {self._date} {self._time}"
+
+    def reserve(self):
+        pass

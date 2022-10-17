@@ -12,18 +12,6 @@ class UserModel(Base):
 
     user_id = Column(BigInteger)
     name = Column(VARCHAR)
-    php_session = Column(String(200))
-    xsrf_token = Column(String(200))
-    system_session = Column(String(200))
-
-
-class SnapRecordModel(Base):
-    __tablename__ = "snap_records"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-
-    user_id = Column(BigInteger)
-    name = Column(VARCHAR)
-    php_session = Column(String(200))
-    xsrf_token = Column(String(200))
-    system_session = Column(String(200))
+    php_session = Column(String(50))
+    xsrf_token = Column(String(350))
+    system_session = Column(String(350))
