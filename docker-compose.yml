@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+  bot:
+    build: .
+    command: bash -c "python3 app.py -t polling"
+    volumes:
+      - .telegram-bot-conf:/src/.telegram-bot-conf
+    restart: always

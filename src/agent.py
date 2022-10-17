@@ -6,17 +6,14 @@ import requests
 from datetime import datetime
 from typing import Literal, TypedDict, List, Tuple
 
+from src.object import VacantCourt
+
 
 class BadmintonReserveAgent():
     BaseCookie = TypedDict('Cookie', {'PHPSESSID': str, 'XSRF-TOKEN': str, '17fit_system_session': str})
     Court = TypedDict('Court', {'member_id': int, 'member_name': str, 'role_relationships_id': int, 'level_price': int})
     Datetime = TypedDict('Datetime', {'available_role_relationship_ids': List[int], 'date': str, 'datetime': str, 'time': str})
     CourtAndDatetime = TypedDict('CourtAndDatetime', {'court': Court, 'datetime': Datetime})
-    CheckResult = TypedDict('CheckResult', {
-        'court_idx': int,
-        'date': str,
-        'time': str
-    })
 
     COURTS = Literal['近講臺右', '近講臺中', '近講臺左', '近門口右', '近門口中', '近門口左']
     COURTS_LIST = ['近講臺右', '近講臺中', '近講臺左', '近門口右', '近門口中', '近門口左']
@@ -104,7 +101,7 @@ class BadmintonReserveAgent():
 
                 count_of_the_same_time[court_and_datetime['datetime']['datetime']] += 1
 
-    def check(self, date: str, courts: Tuple[int]) -> List[CheckResult]:
+    def check(self, date: str, courts: Tuple[int]) -> List[VacantCourt]:
         """_summary_
 
         Args:
@@ -112,7 +109,7 @@ class BadmintonReserveAgent():
             courts (Tuple[int]): 場地 (e.g., (1,2,4))
 
         Returns:
-            List[CheckResult]: _description_
+            List[VacantCourt]: _description_
         """
         if not re.match("^(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$", date):
             raise ValueError(f"{date} not match format %m-%d")
@@ -135,11 +132,7 @@ class BadmintonReserveAgent():
             self._set_current_court(court)
             all_datetimes = self._get_provider_datetimes(f'{datetime.now().year}-{date}')
             for i in all_datetimes:
-                result.append({
-                    'court_idx': court_idx,
-                    'date': i['date'],
-                    'time': i['time']
-                })
+                result.append(VacantCourt(court_idx, i['date'], i['time']))
         return result
 
     def go(self, court: int, date: str, time: str) -> bool:

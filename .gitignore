@@ -8,3 +8,5 @@
 src/legacy
 **/job-queue-local.db
 **/.job-queue-local.db
+.venv
+badminton-court-agent.sql
