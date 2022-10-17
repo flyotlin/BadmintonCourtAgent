@@ -6,6 +6,7 @@ from telegram.ext import Updater
 from src.handler.check_courts import CheckCourtsHandler
 from src.handler.help import HelpHandler
 from src.handler.set_token import SetTokenHandler
+from src.handler.snap_courts import SnapCourtsHandler
 
 
 """
@@ -46,3 +47,4 @@ class AyeServer:
         self.dispatcher.add_handler(CheckCourtsHandler())
         self.dispatcher.add_handler(HelpHandler())
         self.dispatcher.add_handler(SetTokenHandler())
+        self.dispatcher.add_handler(SnapCourtsHandler())

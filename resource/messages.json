@@ -6,7 +6,10 @@
         "message": "/set_token: 設定 token\n\ntoken包含php_session, xsrf_token, system_session\n桌面瀏覽器登入 17fit 後可以從 developer tools -> application -> Cookies 中取得\n"
     },
     "help_check_courts": {
-        "message": "/check_courts [DATE] [COURT]: 查詢DATE,COURT在哪些時段可以預約\n\ndate: 欲查詢的日期, e.g., \"05-01\"\ncourt: 欲查詢的場地(1-6)，以逗號分隔, e.g., \"1,2,4\"\n所有場地可輸入 \"all\"\n"
+        "message": "/check_courts DATE COURT: 查詢DATE,COURT在哪些時段可以預約\n\ndate: 欲查詢的日期, e.g., \"05-01\"\ncourt: 欲查詢的場地(1-6)，以逗號分隔, e.g., \"1,2,4\"\nCOURT=0返回所有場地資訊\n"
+    },
+    "help_snap_courts": {
+        "message": "/snap_courts DATE COURT TIME\n/snap_courts check"
     },
     "help_error": {
         "message": "阿椰不懂指令 {{command}}\n"
@@ -23,7 +26,13 @@
     "set_token_stage_xsrf": {
         "message": "system_session:\n"
     },
+    "check_courts_main": {
+        "message": "{{message}}\n"
+    },
     "command_error": {
         "message": "阿椰不懂指令 {{command}}\n"
+    },
+    "token_not_exist_error": {
+        "message": "請先使用/set_token設定token"
     }
 }

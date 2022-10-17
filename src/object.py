@@ -64,5 +64,10 @@ class VacantCourt:
     def string(self) -> str:
         return f"第 {self._court_idx} 場: {self._date} {self._time}"
 
-    def reserve(self):
+    def reserve(self, user_id: int):
+        """
+        I don't know how to resolve circular-import
+        between VacantCourt and BadmintonCourtAgent,
+        so I came up with putting callback here...
+        """
         pass
