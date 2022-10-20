@@ -20,7 +20,7 @@ class DatabaseMgr:
         session.commit()
 
     def query_first(self, model, **kwargs):
-        return self.query_all(model).first()
+        return self.query_all(model, **kwargs).first()
 
     def query_all(self, model, **kwargs):
         """kwargs: filter arguments"""

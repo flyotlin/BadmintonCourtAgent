@@ -30,7 +30,7 @@ class CheckCourtsHandler(CommandHandler):
         date = context.args[0]
         court = int(context.args[1])
 
-        service = VacantCourtService()
+        service = VacantCourtService(update, context)
         courts = service.check(user_id, court, date)
         if courts is None:
             self.reply("token_not_exist_error", update)
