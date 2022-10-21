@@ -7,6 +7,7 @@ from typing import List
 from src.agent import BadmintonReserveAgent
 from src.db_mgr import DatabaseMgr
 from src.db_models import SnapCourtJobModel, UserModel
+from src.logger import AyeLogger
 from src.object import User, VacantCourt
 
 
@@ -15,6 +16,7 @@ class VacantCourtService:
         self._update = update
         self._context = context
         self._engine = engine
+        self._logger = AyeLogger().get()
 
     def check(self, user_id: int, court: int, date: str) -> List[VacantCourt]:
         """Find VacantCourts on 17Fit"""
@@ -55,7 +57,7 @@ class VacantCourtService:
             jobs = job_queue.get_jobs_by_name(name=job_name)
             if len(jobs) != 0:
                 return
-            print("Weird case detected!!!")
+            self._logger.warning("job in db, but not in job_queue, may due to inproper AyeServer job initialization.")
             return
 
         db_mgr.insert(SnapCourtJobModel(
@@ -96,7 +98,7 @@ class VacantCourtService:
                         text=f"成功預約: 第{vacant_court._court_idx}場 @ {vacant_court._date} {vacant_court._time}"
                     )
                 else:
-                    print("Not reservable")
+                    self._logger.info(f"Not reservable: 第{vacant_court._court_idx}場 @ {vacant_court._date} {vacant_court._time}")
             except Exception as e:
                 print("Error occured")
                 print(e)

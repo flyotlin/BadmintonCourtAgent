@@ -40,5 +40,8 @@
     },
     "token_not_exist_error": {
         "message": "請先使用/set_token設定token"
+    },
+    "command_parse_error": {
+        "message": "指令參數錯誤，/help查看正確用法"
     }
 }
