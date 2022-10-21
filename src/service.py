@@ -5,19 +5,20 @@ from time import time
 from typing import List
 
 from src.agent import BadmintonReserveAgent
-from src.db_mgr import SqliteDatabaseMgr
+from src.db_mgr import DatabaseMgr
 from src.db_models import SnapCourtJobModel, UserModel
 from src.object import User, VacantCourt
 
 
 class VacantCourtService:
-    def __init__(self, update: Update, context: CallbackContext) -> None:
+    def __init__(self, update: Update, context: CallbackContext, engine) -> None:
         self._update = update
         self._context = context
+        self._engine = engine
 
     def check(self, user_id: int, court: int, date: str) -> List[VacantCourt]:
         """Find VacantCourts on 17Fit"""
-        service = UserService()
+        service = UserService(engine=self._engine)
         user = service.get(user_id=user_id)
         if user is None:
             return None
@@ -41,7 +42,7 @@ class VacantCourtService:
         user_id = self._update.message.from_user.id
         job_name = f"{username}_{user_id+int(time())}"
 
-        db_mgr = SqliteDatabaseMgr()
+        db_mgr = DatabaseMgr(engine=self._engine)
         row = db_mgr.query_first(SnapCourtJobModel,
             user_id=user_id,
             date=vacant_court._date,
@@ -80,7 +81,7 @@ class VacantCourtService:
         so I came up with putting callback here...
         """
         def callback(context: CallbackContext):
-            service = UserService()
+            service = UserService(engine=self._engine)
             user = service.get(user_id=user_id)
             if user is None:
                 raise Exception("token not set")
@@ -108,16 +109,16 @@ class VacantCourtService:
 
 
 class UserService:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, engine) -> None:
+        self._engine = engine
 
     def get(self, user_id: int) -> User:
-        db_mgr = SqliteDatabaseMgr()
+        db_mgr = DatabaseMgr(engine=self._engine)
         row = db_mgr.query_first(UserModel, user_id=user_id)
         if row is None:
             return None
 
-        user = User(name=row.name, user_id=row.user_id)
+        user = User(name=row.name, user_id=row.user_id, engine=self._engine)
         user.set_php_session(row.php_session)
         user.set_xsrf_token(row.xsrf_token)
         user.set_system_session(row.system_session)

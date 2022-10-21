@@ -1,12 +1,13 @@
 import os
 from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
 
 from src.db_models import Base
 
 
 class DatabaseMgr:
-    def __init__(self, engine) -> None:
+    def __init__(self, engine: Engine) -> None:
         self.engine = engine
         self.session_maker = sessionmaker(bind=self.engine)
         self._initialize()
@@ -49,11 +50,11 @@ class DatabaseMgr:
         session.commit()
 
 
-class SqliteDatabaseMgr(DatabaseMgr):
-    def __init__(self, path=None) -> None:
+class SqliteEngine:
+    @staticmethod
+    def get(path=None) -> Engine:
         if path is None:
             pwd = os.path.abspath(os.path.dirname(__file__))
             path = os.path.join(pwd, "../badminton-court-agent.sql")
 
-        engine = create_engine(f"sqlite:///{path}")
-        super().__init__(engine)
+        return create_engine(f"sqlite:///{path}")

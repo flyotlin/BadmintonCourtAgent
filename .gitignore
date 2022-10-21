@@ -10,3 +10,4 @@ src/legacy
 **/.job-queue-local.db
 .venv
 badminton-court-agent.sql
+badminton-court-agent.log*

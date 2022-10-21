@@ -1,9 +1,9 @@
-from src.db_mgr import SqliteDatabaseMgr
+from src.db_mgr import DatabaseMgr
 from src.db_models import UserModel
 
 
 class User:
-    def __init__(self, name, user_id) -> None:
+    def __init__(self, name, user_id, engine) -> None:
         # TODO: type, value check
         self._name = name
         self._user_id = user_id
@@ -11,6 +11,8 @@ class User:
         self._php_session = ""
         self._xsrf_token = ""
         self._system_session = ""
+
+        self._engine = engine
 
     def get_token(self):
         return {
@@ -30,7 +32,7 @@ class User:
 
     def save(self):
         """Save to Database"""
-        db_mgr = SqliteDatabaseMgr()
+        db_mgr = DatabaseMgr(engine=self._engine)
         row = db_mgr.query_first(UserModel, user_id=self._user_id)
 
         if row is None:

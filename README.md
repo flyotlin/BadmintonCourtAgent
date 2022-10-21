@@ -26,12 +26,12 @@
 - `/check_courts`:
 
     check available courts. `/check_courts ("help"|DATE COURT)`
-- `/snap_courts`:
+- `/snap_court`:
 
     set a repeating job to reserve a court every `INTERVAL` seconds, no matter if the court is available or not.
-    `/snap_courts ("help"|"check"|DATE COURT TIME)`
+    `/snap_court ("help"|"check"|DATE COURT TIME)`
 
-> COMMAND: either "set_token", "check_courts", "snap_courts"
+> COMMAND: either "set_token", "check_courts", "snap_court"
 
 > DATE: "month-date". Like 06-03, remember to pad zero in the front.
 
@@ -78,7 +78,7 @@
     You can think of this (**XxxService**) as a **service courter**, when you ask **XxxService**, it returns the object(Xxx) or performs some operations related to the object(Xxx).
 - parser.py
 
-    Parses the arguments provided, implementing a simple recursive descent parser here.
+    Parses the arguments provided, implementing a simple recursive descent parser here with a simple grammar inside.
 
 ## Acknowledgement
 Special thanks to @cliffxzx.

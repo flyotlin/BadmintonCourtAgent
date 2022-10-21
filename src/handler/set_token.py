@@ -3,13 +3,18 @@ from telegram.ext import CommandHandler, CallbackContext, ConversationHandler, F
 
 from src.handler.help import HelpHandler
 from src.json_reader import MessageReader
+from src.logger import AyeLogger
 from src.object import User
+from src.parser import AyeParser
 
 
 class SetTokenHandler(ConversationHandler):
     STAGE_PHP, STAGE_XSRF, STAGE_SYS_SESSION = range(3)
 
-    def __init__(self):
+    def __init__(self, engine):
+        self._engine = engine
+        self._logger = AyeLogger().get()
+
         self.handler_command = "set_token"
         self.user_in_userdata = "user"
         self.reader = MessageReader()
@@ -27,24 +32,30 @@ class SetTokenHandler(ConversationHandler):
 
     def set_token_command(self) -> callable:
         def callback(update: Update, context: CallbackContext):
-            args_len = len(context.args)
-            if args_len == 0:
+            parser = AyeParser(context.args)
+            ret = parser.parse_set_token()
+            if ret == 0:
+                self._logger.debug("[set_token]: Start the set_token conversation")
                 self.reply(f"{self.handler_command}_main", update)
                 return self.STAGE_PHP
-            if context.args[0] == "help" and args_len == 1:
+            elif ret == 1:
+                self.logger.debug("[set_token]: Show help of set_token")
                 self.help(update)
                 return
-            self.reply("command_error", update, replaced_vars={"command": context.args[0]})
+            else:
+                self._logger.info(f"[set_token]: invalid arguments <{context.args}>")
+                self.reply("command_error", update, replaced_vars={"command": context.args[0]})
         return callback
 
     def stage_php(self) -> callable:
         def callback(update: Update, context: CallbackContext) -> int:
             from_user = update.message.from_user
 
-            user = User(from_user.username, from_user.id)
+            user = User(from_user.username, from_user.id, engine=self._engine)
             user.set_php_session(update.message.text)
             context.user_data[self.user_in_userdata] = user
 
+            self._logger.debug(f"[set_token]: user {from_user.username}[{from_user.id}] set PHP <{update.message.text}>")
             self.reply(f"{self.handler_command}_stage_php", update)
             return self.STAGE_XSRF
         return callback
@@ -55,6 +66,7 @@ class SetTokenHandler(ConversationHandler):
             user.set_xsrf_token(update.message.text)
             context.user_data[self.user_in_userdata] = user
 
+            self._logger.debug(f"[set_token]: user {user._name}[{user._user_id}] set XSRF <{update.message.text}>")
             self.reply(f"{self.handler_command}_stage_xsrf", update)
             return self.STAGE_SYS_SESSION
         return callback
@@ -64,11 +76,13 @@ class SetTokenHandler(ConversationHandler):
             user = context.user_data[self.user_in_userdata]
             user.set_system_session(update.message.text)
             user.save()
+            self._logger.debug(f"[set_token]: user {user._name}[{user._user_id}] set SYS_SESSION <{update.message.text}>")
             return ConversationHandler.END
         return callback
 
     def cancel(self) -> callable:
         def callback(update: Update, context: CallbackContext) -> int:
+            self._logger.debug(f"[set_token]: user {update.message.from_user.username} cancelled conversation")
             self.reply(f"{self.handler_command}_cancel", update, reply_options={
                 "reply_markup": ReplyKeyboardRemove()
             })

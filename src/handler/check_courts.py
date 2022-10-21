@@ -4,11 +4,14 @@ from telegram.ext import CommandHandler, CallbackContext
 
 from src.handler.help import HelpHandler
 from src.json_reader import MessageReader
+from src.parser import AyeParser
 from src.service import VacantCourtService
 
 
 class CheckCourtsHandler(CommandHandler):
-    def __init__(self):
+    def __init__(self, engine):
+        self._engine = engine
+
         self.handler_command = "check_courts"
         self.reader = MessageReader()
 
@@ -16,13 +19,14 @@ class CheckCourtsHandler(CommandHandler):
 
     def check_courts_command(self) -> callable:
         def callback(update: Update, context: CallbackContext):
-            if self.is_help(context.args):
+            parser = AyeParser(context.args)
+            ret = parser.parse_check_courts()
+            if ret == 0:
                 self.help(update)
-                return
-            if self.is_check_courts(context.args):
+            elif ret == 1:
                 self.check_courts(update, context)
-                return
-            self.reply("command_error", update, replaced_vars={"command": context.args[0]})
+            else:
+                self.reply("command_error", update, replaced_vars={"command": context.args[0]})
         return callback
 
     def check_courts(self, update: Update, context: CallbackContext):
@@ -30,33 +34,12 @@ class CheckCourtsHandler(CommandHandler):
         date = context.args[0]
         court = int(context.args[1])
 
-        service = VacantCourtService(update, context)
+        service = VacantCourtService(update, context, self._engine)
         courts = service.check(user_id, court, date)
         if courts is None:
             self.reply("token_not_exist_error", update)
         reply_msg = service.gen_reply_msg(courts)
         self.reply(f"{self.handler_command}_main", update, replaced_vars={"message": reply_msg})
-
-    def is_help(self, args) -> bool:
-        if args[0] == "help" and len(args) == 1:
-            return True
-        return False
-
-    def is_check_courts(self, args) -> bool:
-        if len(args) != 2:
-            return False
-
-        date_rule = "^(0[1-9]|1[0-2])-(0[1-9]|1[0-9]|2[0-9]|3[0-1])$"
-        date = args[0]
-        if not re.match(date_rule, date):
-            return False
-
-        court = args[1]
-        if not court.isnumeric():
-            return False
-        if int(court) < 0 or int(court) > 6:
-            return False
-        return True
 
     def help(self, update: Update):
         helpHandler = HelpHandler()
