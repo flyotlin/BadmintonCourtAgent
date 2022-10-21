@@ -45,7 +45,8 @@ class VacantCourtService:
         job_name = f"{username}_{user_id+int(time())}"
 
         db_mgr = DatabaseMgr(engine=self._engine)
-        row = db_mgr.query_first(SnapCourtJobModel,
+        row = db_mgr.query_first(
+            SnapCourtJobModel,
             user_id=user_id,
             date=vacant_court._date,
             time=vacant_court._time,

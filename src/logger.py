@@ -36,7 +36,7 @@ class AyeLogger:
         handler = cls._get_handler(RotatingFileHandler(
             filename=filename,
             mode="a",
-            maxBytes=100*1e6,
+            maxBytes=100 * 1e6,
             backupCount=10,
             encoding="utf-8",
             delay=False

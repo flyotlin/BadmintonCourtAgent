@@ -28,6 +28,7 @@ Grammar:
     TIME -> regular expression
 """
 
+
 class AyeParser:
     def __init__(self, args: List[str]):
         self.args = args
