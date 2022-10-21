@@ -1,31 +1,85 @@
 # Badminton Court Agent Bot
 
-## How to Deploy?
-You can deploy the Bot on your server using `Ansible`.
+## How to Run
+1. Prepare `.telegram-bot-conf` under `/BadmintonCourtAgent`.
+   Get your Bot Token from **BotFather in Telegram**, and fill it in.
+    `$ cp .telegram-bot-conf.Example .telegram-bot-conf`
+2. Run the Bot
+    Now we only support type `polling`, `webhook` is under development.
 
-By executing the ansible playbook `deploy.yaml`, your server is good to go.
+    - Run in local, with venv
+    `$ python3 -m venv .venv`
+    `$ source ./.venv/bin/activate`
+    `$ python3 -m pip install -r requirements.txt`
+    `$ python3 app.py -t polling`
+    - Run in a container
+    use `docker-compose` (v1.x) or `docker compose` (v2.x) depends on the version of your docker engine
+    `$ docker compose up -d`
 
-Execute: `$ ansible-playbook deploy.yaml`
+## Supported Commands
+- `/help`:
 
-> Remenber before executing, fill in `base` and `telegram_bot_token` in `vars` inside `deploy.yaml`.
+    Check all supported commands, `/help [COMMAND]`.
+- `/set_token`:
 
-> Remember to open your port 27017 to allow the Bot to accept request from Internet.
+    set 17-fit token, `/set_token ["help"]`
+- `/check_courts`:
 
-## Latest Docker Image
-You can check on [DockerHub](https://hub.docker.com/repository/docker/flyotlin/badminton-court-agent)!
+    check available courts. `/check_courts ("help"|DATE COURT)`
+- `/snap_courts`:
 
-Our CI/CD pipeline would update the latest image on DockerHub whenever new code is checked in to branch master.
+    set a repeating job to reserve a court every `INTERVAL` seconds, no matter if the court is available or not.
+    `/snap_courts ("help"|"check"|DATE COURT TIME)`
 
-## Chat-bot Commands
-- `/help`: 查看可用的阿椰指令，加上 command (optional) 後有更詳細說明
-- `/token`: 設定 token
-- `/check`: 查詢空場地
-- `/reserve`: 預約場地
-- `/toggle_reserve`: 自動預約場地
-- `/toggle_poll`: 自動開啟投票
-- `/toggle_remind`: 自動傳送預約提醒訊息
+> COMMAND: either "set_token", "check_courts", "snap_courts"
 
-更詳細的指令可以查看 `src/handler/help.py`。
+> DATE: "month-date". Like 06-03, remember to pad zero in the front.
+
+> COURT: 1~6
+
+> TIME: hour:00. Like 08:00, remember to pad zero in the front.
+
+## Guide to Source Code
+### Directories
+- resource/: Some static files like json
+- src/: Bot source code
+- src/handler: Each handler corresponds to a command supported in our bot.
+- tests/: all kinds of tests to ensure our bot works properly
+### Files
+- app.py:
+
+    bot main entry point, includes `AyeServer` to start the whole bot service.
+- server.py:
+
+    sets up **telegram-bot-conf**, **handlers**, **logger**, and decide **service type** (either `polling` or `webhook`).
+- logger.py:
+
+    provides a pre-configured logger, a static logger instance shared accross the whole service.
+- json_reader.py:
+
+    read messages defined in `resource/messages.json`, so that messages won't be hard-coded in source code.
+- db_mgr.py:
+
+    abstract db manager that provides basic db operations, pass in different db engine (defaults to **Sqlite**) in `AyeServer`.
+- db_models.py:
+
+    ORM models mapping to db tables, we use `sqlalchemy` as ORM framework.
+- agent.py:
+
+    Interact with 17Fit API, provides `check()` and `go()` to check current vacant courts and reserve a specific vacant courts respectively.
+- object.py
+
+    Defined some useful object representing the concept we used across the bot service.
+    For instance, `User` represents a specific user interacting with our bot, and `VacantCourt` represents court available on 17Fit right now.
+- service.py
+
+    Serves the corresponding objects in `objects.py`.
+
+    You can think of this (**XxxService**) as a **service courter**, when you ask **XxxService**, it returns the object(Xxx) or performs some operations related to the object(Xxx).
+- parser.py
+
+    Parses the arguments provided, implementing a simple recursive descent parser here.
+
 ## Acknowledgement
 Special thanks to @cliffxzx.
 ![](https://avatars.githubusercontent.com/u/44764053?v=4)
