@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import List
 
 from src.agent import BadmintonReserveAgent
+from src.object import VacantCourt
 
 
 class TestAgentCheck(unittest.TestCase):
@@ -14,19 +15,20 @@ class TestAgentCheck(unittest.TestCase):
     def test_correct_date_and_courts(self):
         _date = '05-10'
         _courts = (1, 2, 4)
-        expected_result = {
-            'court_idx': None,
-            'date': f'{datetime.now().year}-{_date}',
-            'time': self._time
-        }
         all_expected_results = []
         for i in _courts:
-            expected_result['court_idx'] = i
-            all_expected_results.append(expected_result.copy())
+            expected_result = VacantCourt(
+                court_idx=None,
+                date=f'{datetime.now().year}-{_date}',
+                time=self._time
+            )
+            expected_result._court_idx = i
+            all_expected_results.append(expected_result)
 
         actual = self.agent.check(date=_date, courts=_courts)
 
-        self.assertEqual(all_expected_results, actual)
+        for x, y in zip(all_expected_results, actual):
+            self.assertEqual(x.string(), y.string())
 
     def test_wrong_date_delimiter(self):
         _date = '05/10'
